@@ -18,6 +18,15 @@ app.use((req, res, next) => {
   console.log('Hello from the middleware 👋');
   next();
 });
+app.use((req, res, next) => {
+  console.log(
+    '🚀-----time',
+    `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()} 请求url:${
+      req.url
+    }`
+  );
+  next();
+});
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();

@@ -27,8 +27,6 @@ exports.checkBody = (req, res, next) => {
 };
 
 exports.getAllTours = (req, res) => {
-  console.log(req.requestTime);
-
   res.status(200).json({
     status: 'success',
     requestedAt: req.requestTime,
@@ -40,7 +38,6 @@ exports.getAllTours = (req, res) => {
 };
 
 exports.getTour = (req, res) => {
-  console.log(req.params);
   const id = req.params.id * 1;
 
   const tour = tours.find(el => el.id === id);
