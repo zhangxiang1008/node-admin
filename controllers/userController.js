@@ -1,7 +1,18 @@
+const sqlConnetor = require('../config/mysql');
+
 exports.getAllUsers = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined!'
+  sqlConnetor.query('select * from boys1', (err, rows, fields) => {
+    if (err) {
+      res.status(500).json({
+        status: 'error',
+        data: err
+      });
+      return;
+    }
+    res.status(200).json({
+      status: 'success',
+      data: rows
+    });
   });
 };
 exports.getUser = (req, res) => {
