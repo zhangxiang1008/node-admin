@@ -1,7 +1,9 @@
 const express = require('express');
 const morgan = require('morgan');
-const path = require('path');
-const fs = require('fs');
+
+const jwt = require('express-jwt');
+
+const jsonWebToken = require('jsonwebtoken');
 
 const evil = require('./config/evil');
 
@@ -16,6 +18,29 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(express.json());
+const SECRET_KEY = 'kite1874';
+
+const token = jsonWebToken.sign(
+  {
+    //exp 的值是一个时间戳，这里表示 1h 后 token 失效
+    exp: Math.floor(Date.now() / 1000) + 2 * 60,
+    userId: 122,
+    role: 'admin'
+  },
+  SECRET_KEY
+);
+console.log('---token', token);
+
+app.use(
+  jwt.expressjwt({ secret: SECRET_KEY, algorithms: ['HS256'] }).unless({
+    path: ['/auth/adminLogin', /^\/static\/.*/]
+  })
+);
+app.use(function(err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).send('干嘛呢？你想硬闯？！');
+  }
+});
 app.use('/static', express.static(`${__dirname}/static`));
 
 // app.use(function(req, res, next) {
@@ -30,17 +55,10 @@ app.use('/static', express.static(`${__dirname}/static`));
 // });
 
 app.use((req, res, next) => {
-  console.log(
-    '🚀-----time',
-    `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDate()} 请求url:${
-      req.url
-    } id=${req.ip}`
-  );
   // 黑名单
   if (evil.EvilIps.includes(req.ip)) {
     res.status(401).send('not allowed');
   }
-  console.log('Hello from the middleware 👋');
   next();
 });
 
