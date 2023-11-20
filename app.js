@@ -3,12 +3,11 @@ const morgan = require('morgan');
 
 const jwt = require('express-jwt');
 
-const jsonWebToken = require('jsonwebtoken');
-
 const evil = require('./config/evil');
 
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
+const loginRouter = require('./routes/loginRouter');
 
 const app = express();
 
@@ -20,20 +19,9 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json());
 const SECRET_KEY = 'kite1874';
 
-const token = jsonWebToken.sign(
-  {
-    //exp 的值是一个时间戳，这里表示 1h 后 token 失效
-    exp: Math.floor(Date.now() / 1000) + 2 * 60,
-    userId: 122,
-    role: 'admin'
-  },
-  SECRET_KEY
-);
-console.log('---token', token);
-
 app.use(
   jwt.expressjwt({ secret: SECRET_KEY, algorithms: ['HS256'] }).unless({
-    path: ['/auth/adminLogin', /^\/static\/.*/]
+    path: ['/api/v1/login', /^\/static\/.*/]
   })
 );
 app.use(function(err, req, res, next) {
@@ -70,6 +58,7 @@ app.use((req, res, next) => {
 // 3) ROUTES
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/login', loginRouter);
 
 app.use(function(err, req, res, next) {
   // 记录错误
