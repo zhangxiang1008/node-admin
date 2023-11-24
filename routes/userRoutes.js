@@ -14,4 +14,6 @@ router
   .patch(userController.updateUser)
   .delete(userController.deleteUser);
 
+router.route('/rank/:number').get(userController.getUsersRank);
+
 module.exports = router;

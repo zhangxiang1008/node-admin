@@ -31,17 +31,6 @@ app.use(function(err, req, res, next) {
 });
 app.use('/static', express.static(`${__dirname}/static`));
 
-// app.use(function(req, res, next) {
-//   const filePath = path.join(__dirname, 'static', req.url);
-//   fs.stat(filePath, function(err, exists) {
-//     if (exists) {
-//       res.sendFile(filePath);
-//     } else {
-//       next();
-//     }
-//   });
-// });
-
 app.use((req, res, next) => {
   // 黑名单
   if (evil.EvilIps.includes(req.ip)) {

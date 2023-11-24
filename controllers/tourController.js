@@ -1,4 +1,5 @@
 const fs = require('fs');
+const client = require('../config/redis');
 
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)

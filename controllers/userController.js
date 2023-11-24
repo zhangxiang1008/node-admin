@@ -1,4 +1,5 @@
 const boy = require('../models/Boy');
+const client = require('../config/redis');
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -53,5 +54,25 @@ exports.deleteUser = (req, res) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not yet defined!'
+  });
+};
+
+exports.getUsersRank = (req, res) => {
+  const num = req.params.number;
+  client.zrevrange('grades', 0, num, 'withscores', (err, reply) => {
+    if (err || !Array.isArray(reply)) {
+      return res.status(500).json({
+        status: 'error',
+        message: err
+      });
+    }
+    const map = {};
+    for (let i = 0; i < reply.length; i += 2) {
+      map[reply[i]] = reply[i + 1];
+    }
+    return res.status(200).json({
+      status: 'success',
+      data: map
+    });
   });
 };
