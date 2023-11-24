@@ -56,7 +56,11 @@ exports.deleteUser = (req, res) => {
     message: 'This route is not yet defined!'
   });
 };
-
+/**
+ * 获取redis中的用户排名
+ * @param {*} req
+ * @param {*} res
+ */
 exports.getUsersRank = (req, res) => {
   const num = req.params.number;
   client.zrevrange('grades', 0, num, 'withscores', (err, reply) => {
